@@ -36,25 +36,47 @@ async function init() {
 // 2. โหลดรูปภาพต้นแบบ (ปรับชื่อ fino, not ตามไฟล์จริง)
 async function loadLabeledImages() {
     const labels = ['fino', 'not']; 
-    return Promise.all(
+    const results = await Promise.all(
         labels.map(async label => {
             const descriptions = [];
-            // วนลูปโหลดรูป 1 ถึง 3 สำหรับแต่ละคน
-            for (let i = 1; i <= 3; i++) {
+            // รายการชื่อไฟล์ที่อาจจะเป็นไปได้
+            const potentialFiles = [
+                `/labeled_images/${label}.jpg`,
+                `/labeled_images/${label}1.jpg`,
+                `/labeled_images/${label}2.jpg`,
+                `/labeled_images/${label}3.jpg`
+            ];
+
+            for (const url of potentialFiles) {
                 try {
-                    const img = await faceapi.fetchImage(`/labeled_images/${label}${i}.jpg`);
+                    const img = await faceapi.fetchImage(url);
                     const detections = await faceapi.detectSingleFace(img)
                         .withFaceLandmarks()
                         .withFaceDescriptor();
-                    if (detections) descriptions.push(detections.descriptor);
+                    if (detections) {
+                        descriptions.push(detections.descriptor);
+                        console.log(`Loaded: ${url}`);
+                    }
                 } catch (e) {
-                    // ถ้าไม่มีรูปครบ 3 ใบก็ไม่เป็นไร ระบบจะข้ามไป
+                    // ข้ามไฟล์ที่ไม่มีอยู่จริง
                 }
             }
-            if (descriptions.length === 0) return null;
-            return new faceapi.LabeledFaceDescriptors(label, descriptions);
+
+            if (descriptions.length > 0) {
+                return new faceapi.LabeledFaceDescriptors(label, descriptions);
+            }
+            return null;
         })
-    ).then(res => res.filter(d => d !== null));
+    );
+
+    const filteredResults = results.filter(d => d !== null);
+    
+    // ดัก Error ถ้าไม่มีรูปอะไรโหลดได้เลย
+    if (filteredResults.length === 0) {
+        throw new Error("ไม่สามารถโหลดรูปต้นแบบได้เลยแม้แต่รูปเดียว! กรุณาเช็คชื่อไฟล์ใน labeled_images");
+    }
+
+    return filteredResults;
 }
 
 let currentFacingMode = 'user'; // เริ่มต้นที่กล้องหน้า
