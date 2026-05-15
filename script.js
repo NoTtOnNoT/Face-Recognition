@@ -36,7 +36,7 @@ async function init() {
 // 2. โหลดรูปภาพต้นแบบ (ปรับชื่อ fino, not ตามไฟล์จริง)
 async function loadLabeledImages() {
     // รายชื่อโฟลเดอร์ (ชื่อคน)
-    const labels = ['fino', 'not']; 
+    const labels = ['Kittipat', 'Sangarun', 'Jiragrit']; 
     
     return Promise.all(
         labels.map(async label => {
