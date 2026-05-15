@@ -1,0 +1,403 @@
+/* 1. Global Variables & Setup */
+:root {
+  --primary: #4ecca3;
+  --primary-glow: rgba(78, 204, 163, 0.4);
+  --danger: #e94560;
+  --danger-glow: rgba(233, 69, 96, 0.4);
+  --bg: #0f3460;
+  --bg-dark: #16213e;
+  --glass: rgba(255, 255, 255, 0.05);
+  --glass-border: rgba(255, 255, 255, 0.1);
+  --text: #ffffff;
+  --text-dim: rgba(255, 255, 255, 0.6);
+}
+
+* {
+  box-sizing: border-box;
+  -webkit-tap-highlight-color: transparent;
+  /* ป้องกันการคลุมดำตัวหนังสือตอนกดรัวๆ */
+  user-select: none;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  font-family:
+    "Inter",
+    -apple-system,
+    sans-serif;
+  background: radial-gradient(circle at center, var(--bg-dark), var(--bg));
+  color: var(--text);
+  height: 100vh;
+  display: flex;
+  overflow: hidden;
+}
+
+/* 2. Desktop Sidebar (Left) */
+.sidebar-desktop {
+  width: 380px;
+  background: var(--glass);
+  backdrop-filter: blur(25px);
+  border-right: 1px solid var(--glass-border);
+  display: flex;
+  flex-direction: column;
+  padding: 25px;
+  z-index: 10;
+}
+
+.sidebar-header h2 {
+  font-size: 1.5rem;
+  color: var(--primary);
+  margin: 0 0 20px 0;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+/* 3. Main Content (Camera Area) */
+.main-content {
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  padding: 30px;
+}
+
+/* Status Badge */
+.status-badge {
+  position: absolute;
+  top: 30px;
+  padding: 12px 28px;
+  border-radius: 50px;
+  background: var(--danger);
+  font-weight: 700;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  font-size: 0.85rem;
+  box-shadow: 0 4px 15px var(--danger-glow);
+  transition: 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  z-index: 100;
+}
+
+.status-online {
+  background: var(--primary);
+  color: #1a1a2e;
+  box-shadow: 0 8px 25px var(--primary-glow);
+}
+
+/* Camera Container */
+.camera-wrapper {
+  width: 100%;
+  max-width: 800px;
+  position: relative;
+}
+
+.camera-container {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 4/3;
+  background: #000;
+  border-radius: 28px;
+  overflow: hidden;
+  box-shadow: 0 30px 60px rgba(0, 0, 0, 0.6);
+  border: 2px solid var(--glass-border);
+}
+
+video {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transform: scaleX(-1);
+}
+
+canvas {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  transform: scaleX(-1);
+  pointer-events: none;
+}
+
+/* Flip Camera Button */
+#flipBtn {
+  position: absolute;
+  bottom: 25px;
+  right: 25px;
+  width: 55px;
+  height: 55px;
+  border-radius: 50%;
+  border: none;
+  background: var(--primary);
+  color: #1a1a2e;
+  font-size: 1.2rem;
+  cursor: pointer;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+  transition: 0.3s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+#flipBtn:active {
+  transform: scale(0.9);
+} /* เอฟเฟกต์ตอนกด */
+#flipBtn:hover {
+  background: #fff;
+}
+
+/* 4. Log List Styling */
+.log-container {
+  flex-grow: 1;
+  overflow-y: auto;
+  margin: 15px 0;
+  padding-right: 8px;
+}
+
+/* Scrollbar สวยๆ */
+.log-container::-webkit-scrollbar {
+  width: 5px;
+}
+.log-container::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 10px;
+}
+
+.log-item {
+  background: rgba(255, 255, 255, 0.08);
+  padding: 16px;
+  border-radius: 15px;
+  margin-bottom: 12px;
+  border-left: 5px solid var(--primary);
+  animation: slideIn 0.3s ease;
+}
+
+.log-item strong {
+  display: block;
+  font-size: 1.1rem;
+  margin-bottom: 5px;
+}
+.log-item span {
+  font-size: 0.85rem;
+  color: var(--text-dim);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.btn-clear {
+  width: 100%;
+  background: rgba(233, 69, 96, 0.1);
+  border: 1px solid var(--danger);
+  color: var(--danger);
+  padding: 14px;
+  border-radius: 12px;
+  cursor: pointer;
+  font-weight: 600;
+  transition: 0.3s;
+}
+
+.btn-clear:hover {
+  background: var(--danger);
+  color: white;
+}
+.btn-clear:active {
+  transform: scale(0.98);
+}
+
+/* 5. Mobile Interface Components */
+.mobile-only-btn {
+  display: none;
+}
+
+/* 6. Responsive Design (Mobile) - ปรับปรุงใหม่เป็น 80% */
+@media (max-width: 768px) {
+  body {
+    flex-direction: column;
+    overflow: auto; /* ให้เลื่อนดูด้านล่างได้ถ้าจอเล็กมาก */
+    background: var(--bg-dark);
+  }
+
+  .sidebar-desktop {
+    display: none;
+  }
+
+  .main-content {
+    padding: 20px; /* เพิ่มขอบรอบๆ */
+    height: auto;
+    min-height: 100vh;
+    width: 100vw;
+    justify-content: flex-start;
+    gap: 15px;
+  }
+
+  .camera-wrapper {
+    width: 100%;
+    max-width: 500px; /* จำกัดความกว้างไม่ให้บานเกินไปในมือถือ */
+    height: 75vh; /* ตั้งค่าความสูงไว้ที่ประมาณ 75-80% ของหน้าจอ */
+    margin-top: 50px; /* เผื่อที่ให้ Status Badge */
+  }
+
+  .camera-container {
+    border-radius: 25px; /* กลับมามีขอบมนเพื่อให้ดูสวยงาม */
+    height: 100%;
+    border: 2px solid var(--glass-border);
+    box-shadow: 0 15px 40px rgba(0, 0, 0, 0.4);
+  }
+
+  .status-badge {
+    position: relative; /* เปลี่ยนเป็น Relative เพื่อให้อยู่บนสุดของ Main Content */
+    top: 0;
+    right: 0;
+    margin-bottom: 5px;
+    font-size: 0.8rem;
+    width: fit-content;
+  }
+
+  .mobile-only-btn {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    position: relative; /* ไม่ต้องลอยทับกล้องแล้ว */
+    bottom: 0;
+    left: 0;
+    transform: none;
+    background: var(--glass);
+    backdrop-filter: blur(10px);
+    color: var(--primary);
+    padding: 14px 25px;
+    border-radius: 15px;
+    border: 1px solid var(--primary);
+    font-weight: 600;
+    width: 100%;
+    max-width: 500px;
+    justify-content: center;
+    margin-top: 10px;
+  }
+
+  .mobile-only-btn:active {
+    transform: scale(0.98);
+    background: var(--primary);
+    color: #000;
+  }
+
+  /* Modal ปรับความสูงให้พอดี */
+  .modal-content {
+    height: 70vh;
+    margin-top: 15vh;
+  }
+
+  .modal {
+    display: none;
+    position: fixed;
+    z-index: 9999; /* ให้อยู่บนสุด */
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.8);
+    backdrop-filter: blur(8px); /* เบลอฉากหลัง */
+  }
+
+  /* กล่องป๊อปอัพ */
+  .modal-content {
+    background: var(--bg-dark);
+    margin: 10vh auto; /* ให้ลอยลงมาจากขอบบน 10% */
+    padding: 25px;
+    border: 1px solid var(--glass-border);
+    width: 85%;
+    max-height: 75vh;
+    border-radius: 25px;
+    display: flex;
+    flex-direction: column;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.8);
+    animation: popupAnim 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  }
+
+  .modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 15px;
+  }
+
+  .modal-header h3 {
+    margin: 0;
+    color: var(--primary);
+  }
+
+  .close {
+    color: #aaa;
+    font-size: 28px;
+    font-weight: bold;
+    cursor: pointer;
+    padding: 5px 10px;
+  }
+
+  .close:hover {
+    color: white;
+  }
+
+  /* อนิเมชั่นตอนเปิด */
+  @keyframes popupAnim {
+    from {
+      transform: scale(0.8);
+      opacity: 0;
+    }
+    to {
+      transform: scale(1);
+      opacity: 1;
+    }
+  }
+}
+
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(100px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* --- Desktop: ซ่อนปุ่มเปิด Pop-up และตัว Pop-up เองในหน้าจอปกติ --- */
+.mobile-only-btn, .modal {
+    display: none;
+}
+
+/* --- Mobile: เมื่อหน้าจอเล็กลง (Responsive) --- */
+@media (max-width: 768px) {
+    /* ซ่อนแถบด้านซ้าย */
+    .sidebar-desktop {
+        display: none !important;
+    }
+    
+    /* แสดงปุ่มเปิด Pop-up แทน */
+    .mobile-only-btn {
+        display: flex;
+    }
+    
+    /* การแสดงผลของ Modal (Pop-up) จะถูกคุมด้วย JS (block/none) */
+}
+
+/* แก้ไขจุดที่ System Error บังหน้าจอ */
+.status-badge {
+    z-index: 999; /* ให้ลอยอยู่เหนือทุกอย่าง */
+    white-space: nowrap;
+}
