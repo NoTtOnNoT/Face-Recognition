@@ -432,3 +432,13 @@ canvas {
 .scan-notification i {
     font-size: 1.2rem;
 }
+
+.log-item img {
+    border: 1px solid var(--primary);
+    background: #000;
+}
+
+.log-item div {
+    display: flex;
+    flex-direction: column;
+}
