@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Face Recognition System Pro</title>
+    <script defer src="https://cdn.jsdelivr.net/npm/face-api.js@0.22.2/dist/face-api.min.js"></script>
+    <script defer src="script.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        :root { --primary: #4ecca3; --danger: #e94560; --bg: #1a1a2e; }
+        * { box-sizing: border-box; font-family: 'Inter', sans-serif; }
+        body { margin: 0; background: var(--bg); color: white; display: flex; height: 100vh; overflow: hidden; }
+        
+        /* Sidebar */
+        .sidebar { width: 350px; background: rgba(255, 255, 255, 0.05); backdrop-filter: blur(15px); padding: 25px; border-right: 1px solid rgba(255, 255, 255, 0.1); display: flex; flex-direction: column; }
+        .log-container { flex-grow: 1; overflow-y: auto; margin: 20px 0; padding-right: 5px; }
+        .log-item { background: rgba(255, 255, 255, 0.08); padding: 12px; border-radius: 10px; margin-bottom: 10px; border-left: 4px solid var(--primary); animation: slideIn 0.3s ease; }
+        .log-item strong { display: block; font-size: 1.1rem; color: #fff; }
+        .log-item span { font-size: 0.8rem; color: #aaa; }
+
+        /* Main Content */
+        .main-content { flex-grow: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; position: relative; }
+        .camera-container { position: relative; border-radius: 25px; overflow: hidden; box-shadow: 0 25px 50px rgba(0,0,0,0.6); border: 4px solid rgba(255,255,255,0.1); background: #000; width: 720px; height: 540px; }
+        video { transform: scaleX(-1); object-fit: cover; }
+        canvas { position: absolute; top: 0; left: 0; transform: scaleX(-1); }
+
+        .status-badge { position: absolute; top: 30px; right: 30px; padding: 12px 24px; border-radius: 50px; background: var(--danger); font-weight: 600; letter-spacing: 1px; transition: 0.4s; z-index: 10; }
+        .status-online { background: var(--primary); box-shadow: 0 0 20px var(--primary); color: #1a1a2e; }
+        
+        .btn-clear { background: transparent; border: 1px solid #ff4d4d; color: #ff4d4d; padding: 10px; border-radius: 8px; cursor: pointer; transition: 0.3s; }
+        .btn-clear:hover { background: #ff4d4d; color: white; }
+
+        @keyframes slideIn { from { opacity: 0; transform: translateX(-20px); } to { opacity: 1; transform: translateX(0); } }
+    </style>
+</head>
+<body>
+
+    <div class="sidebar">
+        <h2><i class="fas fa-fingerprint"></i> Check-in Log</h2>
+        <div id="logList" class="log-container"></div>
+        <button class="btn-clear" onclick="clearLogs()">Clear All History</button>
+    </div>
+
+    <div class="main-content">
+        <div id="status" class="status-badge">System Initializing...</div>
+        <div class="camera-container">
+            <video id="video" width="720" height="540" autoplay muted></video>
+        </div>
+        <p style="margin-top: 25px; color: #666;"><i class="fas fa-camera"></i> AI is monitoring in real-time</p>
+    </div>
+
+</body>
+</html>
