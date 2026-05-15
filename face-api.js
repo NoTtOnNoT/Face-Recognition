@@ -10,6 +10,6 @@ async function loadFaceMatcherFromJSON() {
     });
 
     // 3. สร้าง FaceMatcher พร้อมใช้งานทันที!
-    const faceMatcher = new faceapi.FaceMatcher(labeledDescriptors, 0.6);
+    const faceMatcher = new faceapi.FaceMatcher(labeledDescriptors, 0.65);
     return faceMatcher;
 }

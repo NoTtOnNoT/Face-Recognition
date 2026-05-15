@@ -3,7 +3,7 @@
     <head>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>AI Face Recognition System Pro</title>
+        <title>SMTE | AI Face Recognition System</title>
         <script defer
             src="https://cdn.jsdelivr.net/npm/face-api.js@0.22.2/dist/face-api.min.js"></script>
         <script defer src="script.js"></script>
@@ -18,7 +18,7 @@
 
         <aside class="sidebar-desktop">
             <div class="sidebar-header">
-                <h2><i class="fas fa-history"></i> Check-in Log</h2>
+                <h2><i class="fas fa-history"></i> SMTE-Check Log</h2>
             </div>
             <div id="logListDesktop" class="log-container"></div>
             <button class="btn-clear" onclick="clearLogs()">Clear All</button>
@@ -29,6 +29,11 @@
 
             <div class="camera-wrapper">
                 <div class="camera-container">
+                    <div id="scanNotice" class="scan-notification">
+                        <i class="fas fa-check-circle"></i>
+                        <span id="noticeText">พบข้อมูล: กำลังบันทึก...</span>
+                    </div>
+
                     <video id="video" autoplay muted playsinline></video>
                     <button id="flipBtn"><i
                             class="fas fa-sync-alt"></i></button>

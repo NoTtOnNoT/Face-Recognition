@@ -193,17 +193,37 @@ video.addEventListener('play', () => {
 let lastUser = "";
 let lastTime = 0;
 
+function showScanNotification(name) {
+    const notice = document.getElementById('scanNotice');
+    const text = document.getElementById('noticeText');
+    
+    text.innerText = `เช็คอินสำเร็จ: ${name}`;
+    notice.classList.add('show');
+
+    // ให้หายไปเองหลังจากผ่านไป 3 วินาที
+    setTimeout(() => {
+        notice.classList.remove('show');
+    }, 3000);
+}
+
 function saveLog(name) {
-  const now = Date.now();
-  if (name !== lastUser || now - lastTime > 15000) {
-    const entry = { name, time: new Date().toLocaleTimeString("th-TH") };
-    attendanceLogs.unshift(entry);
-    if (attendanceLogs.length > 20) attendanceLogs.pop();
-    localStorage.setItem("logs", JSON.stringify(attendanceLogs));
-    renderLogs();
-    lastUser = name;
-    lastTime = now;
-  }
+    const now = Date.now();
+    // ป้องกันการบันทึกซ้ำ (15 วินาที)
+    if (name !== lastUser || now - lastTime > 15000) {
+        const entry = { name, time: new Date().toLocaleTimeString("th-TH") };
+        attendanceLogs.unshift(entry);
+        
+        if (attendanceLogs.length > 20) attendanceLogs.pop();
+        localStorage.setItem("logs", JSON.stringify(attendanceLogs));
+        renderLogs();
+
+        // --- เพิ่มบรรทัดนี้เพื่อแสดงแจ้งเตือนบนหน้าจอ ---
+        showScanNotification(name); 
+        // ----------------------------------------
+
+        lastUser = name;
+        lastTime = now;
+    }
 }
 
 function toggleMobileLog() {

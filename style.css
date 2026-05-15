@@ -401,3 +401,34 @@ canvas {
     z-index: 999; /* ให้ลอยอยู่เหนือทุกอย่าง */
     white-space: nowrap;
 }
+
+/* แถบแจ้งเตือนในกรอบวิดีโอ */
+.scan-notification {
+    position: absolute;
+    top: 20px;
+    left: 50%;
+    transform: translateX(-50%) translateY(-20px);
+    background: rgba(78, 204, 163, 0.9); /* สีเขียว Primary */
+    color: #1a1a2e;
+    padding: 10px 25px;
+    border-radius: 12px;
+    font-weight: bold;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    z-index: 50;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.3);
+    opacity: 0;
+    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    pointer-events: none;
+}
+
+/* คลาสสำหรับสั่งให้แสดงผล */
+.scan-notification.show {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+}
+
+.scan-notification i {
+    font-size: 1.2rem;
+}
