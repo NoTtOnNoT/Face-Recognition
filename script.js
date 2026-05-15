@@ -20,7 +20,7 @@ async function init() {
         statusBadge.innerText = "Scanning Database...";
         
         const labeledDescriptors = await loadLabeledImages();
-        faceMatcher = new faceapi.FaceMatcher(labeledDescriptors, 0.55); // ค่าความแม่นยำ (น้อย=เป๊ะมาก)
+        faceMatcher = new faceapi.FaceMatcher(labeledDescriptors, 0.6); // ค่าความแม่นยำ (น้อย=เป๊ะมาก)
         
         statusBadge.innerText = "System Live";
         statusBadge.classList.add('status-online');
@@ -38,26 +38,65 @@ async function loadLabeledImages() {
     const labels = ['fino', 'not']; 
     return Promise.all(
         labels.map(async label => {
-            try {
-                const img = await faceapi.fetchImage(`/labeled_images/${label}.jpg`);
-                const detections = await faceapi.detectSingleFace(img)
-                    .withFaceLandmarks()
-                    .withFaceDescriptor();
-                if (!detections) throw new Error(`No face found in ${label}.jpg`);
-                return new faceapi.LabeledFaceDescriptors(label, [detections.descriptor]);
-            } catch (e) {
-                console.error(e);
-                return null;
+            const descriptions = [];
+            // วนลูปโหลดรูป 1 ถึง 3 สำหรับแต่ละคน
+            for (let i = 1; i <= 3; i++) {
+                try {
+                    const img = await faceapi.fetchImage(`/labeled_images/${label}${i}.jpg`);
+                    const detections = await faceapi.detectSingleFace(img)
+                        .withFaceLandmarks()
+                        .withFaceDescriptor();
+                    if (detections) descriptions.push(detections.descriptor);
+                } catch (e) {
+                    // ถ้าไม่มีรูปครบ 3 ใบก็ไม่เป็นไร ระบบจะข้ามไป
+                }
             }
+            if (descriptions.length === 0) return null;
+            return new faceapi.LabeledFaceDescriptors(label, descriptions);
         })
     ).then(res => res.filter(d => d !== null));
 }
 
+let currentFacingMode = 'user'; // เริ่มต้นที่กล้องหน้า
+
+// ค้นหาปุ่มและแอด Event
+const flipBtn = document.getElementById('flipBtn');
+flipBtn.addEventListener('click', () => {
+    // สลับค่าระหว่าง user กับ environment
+    currentFacingMode = (currentFacingMode === 'user') ? 'environment' : 'user';
+    
+    // หยุดกล้องเดิมก่อนเริ่มใหม่
+    if (video.srcObject) {
+        video.srcObject.getTracks().forEach(track => track.stop());
+    }
+    
+    // ปรับการสะท้อนของหน้าจอ (ถ้าเป็นกล้องหลังไม่ต้อง Mirror)
+    if (currentFacingMode === 'environment') {
+        video.style.transform = "scaleX(1)";
+        // อย่าลืมปรับ Canvas ด้วยถ้ามีการวาด
+    } else {
+        video.style.transform = "scaleX(-1)";
+    }
+    
+    startVideo(); // เริ่มกล้องใหม่ด้วย mode ที่เลือก
+});
+
 // 3. เริ่มกล้อง
 function startVideo() {
     navigator.mediaDevices.getUserMedia({ 
-        video: { width: 720, height: 540, frameRate: { ideal: 30 } } 
-    }).then(stream => video.srcObject = stream);
+        video: { 
+            facingMode: currentFacingMode, // ใช้ตัวแปรนี้ควบคุม
+            width: 720, 
+            height: 540 
+        } 
+    })
+    .then(stream => {
+        video.srcObject = stream;
+    })
+    .catch(err => {
+        console.error("สลับกล้องไม่ได้: ", err);
+        alert("ไม่พบกล้องที่ต้องการสลับ");
+    });
 }
 
 // 4. ระบบประมวลผลหลัก (Loop)

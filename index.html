@@ -1,13 +1,15 @@
 <!DOCTYPE html>
 <html lang="th">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AI Face Recognition System Pro</title>
-    <script defer src="https://cdn.jsdelivr.net/npm/face-api.js@0.22.2/dist/face-api.min.js"></script>
-    <script defer src="script.js"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-    <style>
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>AI Face Recognition System Pro</title>
+        <script defer
+            src="https://cdn.jsdelivr.net/npm/face-api.js@0.22.2/dist/face-api.min.js"></script>
+        <script defer src="script.js"></script>
+        <link rel="stylesheet"
+            href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+        <style>
         :root { --primary: #4ecca3; --danger: #e94560; --bg: #1a1a2e; }
         * { box-sizing: border-box; font-family: 'Inter', sans-serif; }
         body { margin: 0; background: var(--bg); color: white; display: flex; height: 100vh; overflow: hidden; }
@@ -33,22 +35,29 @@
 
         @keyframes slideIn { from { opacity: 0; transform: translateX(-20px); } to { opacity: 1; transform: translateX(0); } }
     </style>
-</head>
-<body>
+    </head>
+    <body>
 
-    <div class="sidebar">
-        <h2><i class="fas fa-fingerprint"></i> Check-in Log</h2>
-        <div id="logList" class="log-container"></div>
-        <button class="btn-clear" onclick="clearLogs()">Clear All History</button>
-    </div>
-
-    <div class="main-content">
-        <div id="status" class="status-badge">System Initializing...</div>
-        <div class="camera-container">
-            <video id="video" width="720" height="540" autoplay muted></video>
+        <div class="sidebar">
+            <h2><i class="fas fa-fingerprint"></i> Check-in Log</h2>
+            <div id="logList" class="log-container"></div>
+            <button class="btn-clear" onclick="clearLogs()">Clear All
+                History</button>
         </div>
-        <p style="margin-top: 25px; color: #666;"><i class="fas fa-camera"></i> AI is monitoring in real-time</p>
-    </div>
 
-</body>
+        <div class="main-content">
+            <div id="status" class="status-badge">System Initializing...</div>
+            <div class="camera-container">
+                <video id="video" width="720" height="540" autoplay
+                    muted></video>
+                <button id="flipBtn" title="สลับกล้อง"
+                    style="position: absolute; top: 20px; left: 20px; z-index: 20; background: rgba(0,0,0,0.5); color: white; border: 1px solid rgba(255,255,255,0.3); border-radius: 50%; width: 50px; height: 50px; cursor: pointer; backdrop-filter: blur(5px);">
+                    <i class="fas fa-sync-alt"></i>
+                </button>
+            </div>
+            <p style="margin-top: 25px; color: #666;"><i
+                    class="fas fa-camera"></i> AI is monitoring in real-time</p>
+        </div>
+
+    </body>
 </html>
