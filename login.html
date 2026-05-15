@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Login | Face Recognition</title>
+    <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-database-compat.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        body { font-family: 'Inter', sans-serif; background: #1a1a2e; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; }
+        .login-card { background: #16213e; padding: 40px; border-radius: 20px; box-shadow: 0 15px 35px rgba(0,0,0,0.5); width: 100%; max-width: 350px; text-align: center; border: 1px solid rgba(255,255,255,0.1); }
+        h2 { color: #4ecca3; margin-bottom: 25px; }
+        .input-group { margin-bottom: 20px; position: relative; }
+        .input-group i { position: absolute; left: 15px; top: 15px; color: #555; }
+        input { width: 100%; padding: 12px 12px 12px 45px; border-radius: 10px; border: none; background: #0f3460; color: white; box-sizing: border-box; outline: none; transition: 0.3s; }
+        input:focus { box-shadow: 0 0 0 2px #4ecca3; }
+        button { width: 100%; padding: 12px; border-radius: 10px; border: none; background: #4ecca3; color: #1a1a2e; font-weight: bold; cursor: pointer; transition: 0.3s; margin-top: 10px; }
+        button:hover { background: #45b393; transform: translateY(-2px); }
+        #errorMsg { color: #e94560; font-size: 14px; margin-top: 15px; display: none; }
+    </style>
+</head>
+<body>
+
+    <div class="login-card">
+        <i class="fas fa-user-shield" style="font-size: 50px; color: #4ecca3; margin-bottom: 15px;"></i>
+        <h2>Admin Login</h2>
+        <div class="input-group">
+            <i class="fas fa-user"></i>
+            <input type="text" id="username" placeholder="Username">
+        </div>
+        <div class="input-group">
+            <i class="fas fa-lock"></i>
+            <input type="password" id="password" placeholder="Password">
+        </div>
+        <button onclick="login()">Login</button>
+        <p id="errorMsg">Username หรือ Password ไม่ถูกต้อง</p>
+    </div>
+
+    <script>
+        const firebaseConfig = {
+            apiKey: "AIzaSyDtIQFbkkS_9Va7N972fhZ-pQN9zN2i4uc",
+            authDomain: "projectm5-69d17.firebaseapp.com",
+            databaseURL: "https://projectm5-69d17-default-rtdb.asia-southeast1.firebasedatabase.app",
+            projectId: "projectm5-69d17",
+            storageBucket: "projectm5-69d17.firebasestorage.app",
+            messagingSenderId: "480347312274",
+            appId: "1:480347312274:web:20b70500dbf52f4f4d164b"
+        };
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.database();
+
+        async function login() {
+            const userIn = document.getElementById('username').value;
+            const passIn = document.getElementById('password').value;
+            const errorMsg = document.getElementById('errorMsg');
+
+            try {
+                const snapshot = await db.ref('admin_config').once('value');
+                const adminData = snapshot.val();
+
+                if (userIn === adminData.username && passIn === adminData.password) {
+                    // เก็บสถานะการล็อกอินชั่วคราวใน Session
+                    sessionStorage.setItem('isAdmin', 'true');
+                    window.location.href = 'admin.html';
+                } else {
+                    errorMsg.style.display = 'block';
+                }
+            } catch (error) {
+                console.error(error);
+                alert("เกิดข้อผิดพลาดในการเชื่อมต่อฐานข้อมูล");
+            }
+        }
+    </script>
+</body>
+</html>

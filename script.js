@@ -199,7 +199,6 @@ function listenToFirebase() {
 function renderLogs(logs = []) {
     const logHTML = logs.length > 0 ? logs.map(l => `
         <div class="log-item" style="display: flex; align-items: center; gap: 12px; background: rgba(255,255,255,0.05); padding: 10px; border-radius: 12px; margin-bottom: 8px; border: 1px solid var(--glass-border);">
-            <img src="${l.image}" style="width: 50px; height: 50px; border-radius: 8px; object-fit: cover; border: 1.5px solid var(--primary);">
             <div style="display: flex; flex-direction: column;">
                 <strong style="color: var(--primary); font-size: 14px;">${l.name}</strong>
                 <span style="font-size: 11px; color: var(--text-dim);"><i class="far fa-clock"></i> ${l.timeDisplay}</span>
