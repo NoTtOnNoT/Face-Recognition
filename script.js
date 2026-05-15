@@ -35,48 +35,44 @@ async function init() {
 
 // 2. โหลดรูปภาพต้นแบบ (ปรับชื่อ fino, not ตามไฟล์จริง)
 async function loadLabeledImages() {
+    // รายชื่อโฟลเดอร์ (ชื่อคน)
     const labels = ['fino', 'not']; 
-    const results = await Promise.all(
+    
+    return Promise.all(
         labels.map(async label => {
             const descriptions = [];
-            // รายการชื่อไฟล์ที่อาจจะเป็นไปได้
-            const potentialFiles = [
-                `/labeled_images/${label}.jpg`,
-                `/labeled_images/${label}1.jpg`,
-                `/labeled_images/${label}2.jpg`,
-                `/labeled_images/${label}3.jpg`
-            ];
-
-            for (const url of potentialFiles) {
+            
+            // วนลูปโหลดรูปภาพที่อยู่ในโฟลเดอร์นั้นๆ (เช่น 1.jpg ถึง 3.jpg)
+            for (let i = 1; i <= 3; i++) {
                 try {
-                    const img = await faceapi.fetchImage(url);
+                    // เปลี่ยน Path ให้ชี้เข้าไปในโฟลเดอร์ชื่อ label
+                    const img = await faceapi.fetchImage(`/labeled_images/${label}/${i}.jpg`);
+                    
                     const detections = await faceapi.detectSingleFace(img)
                         .withFaceLandmarks()
                         .withFaceDescriptor();
+                        
                     if (detections) {
                         descriptions.push(detections.descriptor);
-                        console.log(`Loaded: ${url}`);
+                        console.log(`โหลดรูป ${label} ใบที่ ${i} สำเร็จ`);
                     }
                 } catch (e) {
-                    // ข้ามไฟล์ที่ไม่มีอยู่จริง
+                    // ถ้าหาไฟล์ไม่เจอ (เช่น มีแค่ 2 รูป) ก็ให้ข้ามไป
+                    console.warn(`ไม่พบไฟล์ /labeled_images/${label}/${i}.jpg`);
                 }
             }
 
             if (descriptions.length > 0) {
+                // รวม Descriptor ทั้งหมด (ทั้งแบบใส่แว่นและไม่ใส่) ไว้ภายใต้ชื่อเดียวกัน
                 return new faceapi.LabeledFaceDescriptors(label, descriptions);
             }
             return null;
         })
-    );
-
-    const filteredResults = results.filter(d => d !== null);
-    
-    // ดัก Error ถ้าไม่มีรูปอะไรโหลดได้เลย
-    if (filteredResults.length === 0) {
-        throw new Error("ไม่สามารถโหลดรูปต้นแบบได้เลยแม้แต่รูปเดียว! กรุณาเช็คชื่อไฟล์ใน labeled_images");
-    }
-
-    return filteredResults;
+    ).then(res => {
+        const filtered = res.filter(d => d !== null);
+        if (filtered.length === 0) throw new Error("ไม่สามารถโหลดรูปจากโฟลเดอร์ได้");
+        return filtered;
+    });
 }
 
 let currentFacingMode = 'user'; // เริ่มต้นที่กล้องหน้า
